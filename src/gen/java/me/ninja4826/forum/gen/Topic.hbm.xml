@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 22, 2016 1:07:57 AM by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="me.ninja4826.forum.gen.Topic" table="topic" schema="public" optimistic-lock="version">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="category" class="me.ninja4826.forum.gen.Category" fetch="select">
+            <column name="category_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="user" class="me.ninja4826.forum.gen.User" fetch="select">
+            <column name="author_id" not-null="true" />
+        </many-to-one>
+        <property name="title" type="string">
+            <column name="title" not-null="true" />
+        </property>
+        <property name="content" type="string">
+            <column name="content" not-null="true" />
+        </property>
+        <property name="createdAt" type="timestamp">
+            <column name="created_at" length="29" not-null="true" />
+        </property>
+        <property name="updatedAt" type="timestamp">
+            <column name="updated_at" length="29" not-null="true" />
+        </property>
+        <set name="posts" table="post" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="topic_id" not-null="true" />
+            </key>
+            <one-to-many class="me.ninja4826.forum.gen.Post" />
+        </set>
+    </class>
+</hibernate-mapping>

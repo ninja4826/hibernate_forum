@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 22, 2016 1:07:57 AM by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="me.ninja4826.forum.gen.PostAncestor" table="post_ancestor" schema="public" optimistic-lock="version">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="postByAncestorId" class="me.ninja4826.forum.gen.Post" fetch="select">
+            <column name="ancestor_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="postByPostId" class="me.ninja4826.forum.gen.Post" fetch="select">
+            <column name="post_id" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

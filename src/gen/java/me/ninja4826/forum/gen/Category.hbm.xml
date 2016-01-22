@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 22, 2016 1:07:57 AM by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="me.ninja4826.forum.gen.Category" table="category" schema="public" optimistic-lock="version">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="category" class="me.ninja4826.forum.gen.Category" fetch="select">
+            <column name="parent_id" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" not-null="true" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" not-null="true" />
+        </property>
+        <property name="hierarchyLevel" type="int">
+            <column name="hierarchy_level" not-null="true" />
+        </property>
+        <property name="createdAt" type="timestamp">
+            <column name="created_at" length="29" not-null="true" />
+        </property>
+        <property name="updatedAt" type="timestamp">
+            <column name="updated_at" length="29" not-null="true" />
+        </property>
+        <set name="categories" table="category" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="parent_id" />
+            </key>
+            <one-to-many class="me.ninja4826.forum.gen.Category" />
+        </set>
+        <set name="topics" table="topic" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="category_id" not-null="true" />
+            </key>
+            <one-to-many class="me.ninja4826.forum.gen.Topic" />
+        </set>
+        <set name="categoryAncestorsForCategoryId" table="category_ancestor" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="category_id" not-null="true" />
+            </key>
+            <one-to-many class="me.ninja4826.forum.gen.CategoryAncestor" />
+        </set>
+        <set name="categoryAncestorsForAncestorId" table="category_ancestor" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="ancestor_id" not-null="true" />
+            </key>
+            <one-to-many class="me.ninja4826.forum.gen.CategoryAncestor" />
+        </set>
+    </class>
+</hibernate-mapping>
