@@ -1,11 +1,11 @@
 .gradle
 build/
-
 gradle-app.setting
-
 !gradle-wrapper.jar
-
 .gradletasknamecache
+hibernate.cfg.xml
+gradle/*.gradle
+src/main/resources/*.properties
 
 .metadata
 bin/

@@ -1,0 +1,11 @@
+ext {
+
+}
+
+task prep << {
+    throw new GradleException("gradle/local-env.gradle must be edited before usage. See env.example.gradle.")
+}
+
+task prepHibernate(dependsOn: prep) {
+
+}

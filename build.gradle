@@ -8,6 +8,7 @@
  */
 
 import groovy.sql.Sql
+import groovy.json.JsonSlurper
 
 buildscript {
     repositories {
@@ -25,6 +26,16 @@ buildscript {
     }
 }
 
+if (!project.hasProperty("env")) {
+    ext.env = "local"
+}
+def envScript = file("gradle/$env-env.gradle")
+if (!envScript.exists()) {
+    throw new GradleException("Unknown environment: $env")
+}
+apply from: envScript
+
+// apply plugin: 'net.saliman.properties'
 apply plugin: 'org.flywaydb.flyway'
 apply plugin: 'eclipse'
 // Apply the java plugin to add support for Java
@@ -34,6 +45,9 @@ sourceSets {
     main {
         java {
             srcDirs = ['src/main/java', 'src/gen/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
         }
     }
 }
@@ -48,6 +62,8 @@ repositories {
 configurations {
     driver
 }
+
+compileJava.dependsOn(prep)
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
@@ -80,6 +96,8 @@ ext {
     webHost = 'forum_test.com'
     webAddress = 'localhost'
     webPort = '8080'
+
+    hbConfigLocation = 'src/main/resources/hibernate.cfg.xml'
 }
 
 flyway {
@@ -88,7 +106,7 @@ flyway {
     password = jdbcPassword
 }
 
-task buildConfig << {
+task buildConfig(dependsOn: prep) << {
     Properties props = new Properties()
     File propsFile = new File('src/main/resources/config.properties')
     props.setProperty('jdbcDriver', jdbcDriver)
@@ -102,6 +120,7 @@ task buildConfig << {
     props.setProperty('webPort', webPort)
 
     propsFile.withWriter( 'UTF-8' ) { fileWriter ->
+        fileWriter.writeLine "Environment: $env"
         props.each { key, value ->
             fileWriter.writeLine "$key=$value"
         }
@@ -140,4 +159,40 @@ task seed(dependsOn: ['flywayClean', 'flywayMigrate']) << {
 
 
     sql.close()
+}
+
+task buildHibernateConfigs(dependsOn: prepHibernate) << {
+    def writer = new StringWriter()
+    def xml = new groovy.xml.MarkupBuilder(writer)
+
+    File hbConfigFile = new File(hbConfigLocation)
+    def hbObj = new JsonSlurper().parseText(project.ext.get("hbConfig"))
+
+    def helper = new groovy.xml.MarkupBuilderHelper(xml)
+    helper.xmlDeclaration([version: '1.0', encoding: 'UTF-8'])
+    helper.yieldUnescaped """<!-- This file was automatically generated using the "buildHibernateConfigs" task from build.gradle. -->
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                             "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+"""
+
+    xml.'hibernate-configuration' {
+        'session-factory'() {
+            if (hbObj.containsKey('properties') && !hbObj.properties.isEmpty()) {
+                hbObj.properties.each{k, v ->
+                    property(name: k, v)
+                }
+            }
+            if (hbObj.containsKey('mappings') && !hbObj.mappings.isEmpty()) {
+                hbObj.mappings.each{map ->
+                    def fileName = (map.replaceAll("\\.", "/") + ".hbm.xml")
+                    mapping(class: map, file: map, package: map, resource: fileName)
+                }
+            }
+        }
+    }
+    hbConfigFile.withWriter( 'UTF-8' ) {fileWriter ->
+        writer.toString().eachLine {line ->
+            fileWriter.writeLine line
+        }
+    }
 }
