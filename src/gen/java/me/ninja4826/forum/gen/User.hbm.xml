@@ -1,16 +1,18 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Jan 22, 2016 1:07:57 AM by Hibernate Tools 4.3.1.Final -->
+<!-- Generated Jan 22, 2016 3:58:51 PM by Hibernate Tools 4.3.1.Final -->
 <hibernate-mapping>
     <class name="me.ninja4826.forum.gen.User" table="user" schema="public" optimistic-lock="version">
         <id name="id" type="int">
             <column name="id" />
             <generator class="assigned" />
         </id>
-        <property name="username" type="string">
-            <column name="username" not-null="true" unique="true" />
-        </property>
+        <natural-id>
+	        <property name="username" type="string">
+	            <column name="username" not-null="true" unique="true" />
+	        </property>
+        </natural-id>
         <property name="email" type="string">
             <column name="email" not-null="true" unique="true" />
         </property>

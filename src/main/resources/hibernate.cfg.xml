@@ -2,12 +2,29 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
                                          "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
- <session-factory name="">
+ <session-factory>
   <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
   <property name="hibernate.connection.password">cowsaysoink</property>
   <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/hibernate_forum</property>
   <property name="hibernate.connection.username">russell</property>
   <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-  <mapping class="me.ninja4826.forum.model.pojo.User" resource="me/ninja4826/forum/model/pojo/User.hbm.xml"/>
+  <property name="show_sql">true</property>
+  <property name="format_sql">true</property>
+  <property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
+  <mapping class="me.ninja4826.forum.gen.Category"
+   file="me.ninja4826.forum.gen.Category"
+   package="me.ninja4826.forum.gen" resource="me/ninja4826/forum/gen/Category.hbm.xml"/>
+  <mapping class="me.ninja4826.forum.gen.Topic"
+   file="me.ninja4826.forum.gen.Topic" package="me.ninja4826.forum.gen" resource="me/ninja4826/forum/gen/Topic.hbm.xml"/>
+  <mapping class="me.ninja4826.forum.gen.Post"
+   file="me.ninja4826.forum.gen.Post" package="me.ninja4826.forum.gen" resource="me/ninja4826/forum/gen/Post.hbm.xml"/>
+  <mapping class="me.ninja4826.forum.gen.CategoryAncestor"
+   file="me.ninja4826.forum.gen.CategoryAncestor"
+   package="me.ninja4826.forum.gen" resource="me/ninja4826/forum/gen/CategoryAncestor.hbm.xml"/>
+  <mapping class="me.ninja4826.forum.gen.PostAncestor"
+   file="me.ninja4826.forum.gen.PostAncestor"
+   package="me.ninja4826.forum.gen" resource="me/ninja4826/forum/gen/PostAncestor.hbm.xml"/>
+  <mapping class="me.ninja4826.forum.gen.User"
+   file="me.ninja4826.forum.gen.User" package="me.ninja4826.forum.gen" resource="me/ninja4826/forum/gen/User.hbm.xml"/>
  </session-factory>
 </hibernate-configuration>

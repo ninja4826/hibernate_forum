@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Jan 22, 2016 1:07:57 AM by Hibernate Tools 4.3.1.Final -->
+<!-- Generated Jan 22, 2016 3:58:51 PM by Hibernate Tools 4.3.1.Final -->
 <hibernate-mapping>
     <class name="me.ninja4826.forum.gen.CategoryAncestor" table="category_ancestor" schema="public" optimistic-lock="version">
         <id name="id" type="int">

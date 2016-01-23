@@ -7,6 +7,8 @@
  * user guide available at https://docs.gradle.org/2.6/userguide/tutorial_java_projects.html
  */
 
+import groovy.sql.Sql
+
 buildscript {
     repositories {
         mavenLocal()
@@ -19,11 +21,10 @@ buildscript {
     dependencies {
         classpath 'org.postgresql:postgresql:9.4.1207'
         classpath 'org.flywaydb:flyway-gradle-plugin:3.2.1'
-        classpath 'gradle.plugin.org.hibernate.gradle.tools:hibernatetools-gradle-plugin:1.2.3'
+        classpath 'de.svenkubiak:jBCrypt:0.4.1'
     }
 }
 
-apply plugin: 'org.hibernate.gradle.tools'
 apply plugin: 'org.flywaydb.flyway'
 apply plugin: 'eclipse'
 // Apply the java plugin to add support for Java
@@ -44,6 +45,10 @@ repositories {
     jcenter()
 }
 
+configurations {
+    driver
+}
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
     // The production code uses the SLF4J logging API at compile time
@@ -54,7 +59,7 @@ dependencies {
     compile 'de.svenkubiak:jBCrypt:0.4.1'
     compile 'io.jsonwebtoken:jjwt:0.6.0'
     compile 'org.postgresql:postgresql:9.4.1207'
-    // driver 'org.postgresql:postgresql:9.4.1207'
+    driver 'org.postgresql:postgresql:9.4.1207'
     compile 'org.hibernate:hibernate-core:5.0.7.Final'
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
@@ -62,24 +67,6 @@ dependencies {
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
     testCompile 'junit:junit:4.12'
-}
-
-task buildHibernateConfig << {
-    File configFile = new File('src/main/resources/hibernate.cfg.xml')
-    configFile.delete()
-    def writer = new StringWriter()
-    def xml = new groovy.xml.MarkupBuilder(writer)
-    xml."hibernate-configuration"() {
-        "session-factory"() {
-            property(name: 'connection.driver_class', jdbcDriver)
-            property(name: 'connection.url', jdbcURL)
-            property(name: 'connection.user', jdbcUser)
-            property(name: 'connection.password', jdbcPassword)
-            property(name: 'show_sql', true)
-            property(name: 'dialect', 'org.hibernate.dialect.PostgreSQLDialect')
-        }
-    }
-    configFile << writer.toString()
 }
 
 ext {
@@ -99,15 +86,6 @@ flyway {
     url = jdbcURL
     user = jdbcUser
     password = jdbcPassword
-}
-
-database {
-    basePackage = "me.ninja4826.forum.gen"
-    url = jdbcURL
-    user = jdbcUser
-    password = jdbcPassword
-    driver = jdbcDriver
-    dialect = "org.hibernate.dialect.PostgreSQLDialect"
 }
 
 task buildConfig << {
@@ -143,10 +121,23 @@ task(runSimple, dependsOn: 'classes', type: JavaExec) {
     systemProperty 'webPort', webPort
 }
 
-task hibernate << {
-    ant.taskdef(classname: 'org.hibernate.tool.ant.HibernateToolTask') {
-        classpath {
-            fileset(dir: 'libs', includes: '*.jar')
-        }
+task seed(dependsOn: ['flywayClean', 'flywayMigrate']) << {
+
+    URLClassLoader loader = GroovyObject.class.classLoader
+    configurations.driver.each { File file ->
+        loader.addURL(file.toURL())
     }
+
+    def sql = Sql.newInstance(jdbcURL, jdbcUser, jdbcPassword, jdbcDriver)
+    def salt = org.mindrot.jbcrypt.BCrypt.gensalt()
+    def hash = org.mindrot.jbcrypt.BCrypt.hashpw('cowsaysoink', salt)
+    def user = ['Ninja4826', 'hueske.russ690@gmail.com', salt, hash, 'admin']
+    def cat = ['Test Category', 'ugh', 1]
+    def topic = ['Test Topic', 'ugh', 1, 1]
+    sql.execute 'INSERT INTO "user" (username, email, salt, password_hash, role) VALUES (?, ?, ?, ?, ?)', user
+    sql.execute 'INSERT INTO "category" (name, description, hierarchy_level) VALUES (?, ?, ?)', cat
+    sql.execute 'INSERT INTO "topic" (title, content, author_id, category_id) VALUES (?, ?, ?, ?)', topic
+
+
+    sql.close()
 }
