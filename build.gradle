@@ -170,9 +170,12 @@ task buildHibernateConfigs(dependsOn: prepHibernate) << {
 
     def helper = new groovy.xml.MarkupBuilderHelper(xml)
     helper.xmlDeclaration([version: '1.0', encoding: 'UTF-8'])
-    helper.yieldUnescaped """<!-- This file was automatically generated using the "buildHibernateConfigs" task from build.gradle. -->
+    helper.yieldUnescaped """
+<!-- This file was automatically generated using the "buildHibernateConfigs" task from build.gradle. -->
+
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
                                              "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
 """
 
     xml.'hibernate-configuration' {
@@ -182,10 +185,12 @@ task buildHibernateConfigs(dependsOn: prepHibernate) << {
                     property(name: k, v)
                 }
             }
-            if (hbObj.containsKey('mappings') && !hbObj.mappings.isEmpty()) {
-                hbObj.mappings.each{map ->
-                    def fileName = (map.replaceAll("\\.", "/") + ".hbm.xml")
-                    mapping(class: map, file: map, package: map, resource: fileName)
+            if (hbObj.containsKey('mappings') && hbObj.mappings.containsKey("package") && hbObj.mappings.containsKey("maps") && !hbObj.mappings.maps.isEmpty()) {
+                def pName = hbObj.mappings.package
+                hbObj.mappings.maps.each {map ->
+                    def className = pName + "." + map
+                    def fileName = (className.replaceAll("\\.", "/") + ".hbm.xml")
+                    mapping(class: className, file: className, package: pName, resource: fileName)
                 }
             }
         }
@@ -195,4 +200,8 @@ task buildHibernateConfigs(dependsOn: prepHibernate) << {
             fileWriter.writeLine line
         }
     }
+}
+
+task testLoc(dependsOn: prep) << {
+    println hbConfigLocation
 }
