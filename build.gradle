@@ -85,20 +85,20 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-ext {
-    jdbcDriver = 'org.postgresql.Driver'
-    jdbcUser = 'russell'
-    jdbcPassword = 'cowsaysoink'
-    jdbcURL = 'jdbc:postgresql://localhost:5432/hibernate_forum'
-    jdbcDatabaseName = 'public'
-    jwtSecret = 'RFBCM0QxOGNlZGVkMjU0RlQwN2UxcTQ4WDl6OXR3'
-    jwtDecoded = 'DPB3D18ceded254FT07e1q48X9z9tw'
-    webHost = 'forum_test.com'
-    webAddress = 'localhost'
-    webPort = '8080'
-
-    hbConfigLocation = 'src/main/resources/hibernate.cfg.xml'
-}
+// ext {
+//     jdbcDriver = 'org.postgresql.Driver'
+//     jdbcUser = 'russell'
+//     jdbcPassword = 'cowsaysoink'
+//     jdbcURL = 'jdbc:postgresql://localhost:5432/hibernate_forum'
+//     jdbcDatabaseName = 'public'
+//     jwtSecret = 'RFBCM0QxOGNlZGVkMjU0RlQwN2UxcTQ4WDl6OXR3'
+//     jwtDecoded = 'DPB3D18ceded254FT07e1q48X9z9tw'
+//     webHost = 'forum_test.com'
+//     webAddress = 'localhost'
+//     webPort = '8080'
+//
+//     hbConfigLocation = 'src/main/resources/hibernate.cfg.xml'
+// }
 
 flyway {
     url = jdbcURL
