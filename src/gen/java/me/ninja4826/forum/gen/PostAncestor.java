@@ -1,5 +1,5 @@
 package me.ninja4826.forum.gen;
-// Generated Jan 22, 2016 3:59:57 PM by Hibernate Tools 4.3.1.Final
+// Generated Jan 23, 2016 5:01:29 PM by Hibernate Tools 4.3.1.Final
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

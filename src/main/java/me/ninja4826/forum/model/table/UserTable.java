@@ -7,7 +7,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import me.ninja4826.forum.gen.Topic;
 import me.ninja4826.forum.gen.User;
+import me.ninja4826.forum.model.entity.TopicEntity;
 import me.ninja4826.forum.model.entity.UserEntity;
 import me.ninja4826.forum.util.HibernateUtil;
 import me.ninja4826.forum.util.Trans;
@@ -27,6 +29,8 @@ public class UserTable {
 		if (!Pattern.compile(pattern).matcher(u.getEmail()).matches()) return false;
 		
 		if (u.getUsername() == null) return false;
+		
+		if (u.getPassword() == null && u.getPasswordHash() == null) return false; 
 		
 		return true;
 	}
@@ -141,13 +145,20 @@ public class UserTable {
 		ArrayList<UserEntity> entities = HibernateUtil.transact((s) -> {
 			Criteria c = s.createCriteria(User.class);
 			if (!lazy) {
-				c = c.setFetchMode("topics", FetchMode.SELECT)
-						.setFetchMode("posts", FetchMode.SELECT);
+//				c = c.setFetchMode("topics", FetchMode.JOIN)
+//						.setFetchMode("posts", FetchMode.JOIN);
+				c = c.setFetchMode("topics", FetchMode.JOIN);
 			}
 			List<User> users = (List<User>) c.list();
 			List<UserEntity> userEntities = new ArrayList<UserEntity>();
 			for (User u : users) {
-				userEntities.add(new UserEntity(u));
+				ArrayList<TopicEntity> topics = new ArrayList<TopicEntity>();
+				for (Topic t : u.getTopics()) {
+					topics.add(new TopicEntity(t, false));
+				}
+				UserEntity uEntity = new UserEntity(u, true);
+				uEntity.setTopicEntities(topics);
+				userEntities.add(uEntity);
 			}
 			return userEntities;
 		}, ArrayList.class);

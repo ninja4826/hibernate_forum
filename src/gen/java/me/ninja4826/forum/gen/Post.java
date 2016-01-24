@@ -1,5 +1,5 @@
 package me.ninja4826.forum.gen;
-// Generated Jan 22, 2016 3:59:57 PM by Hibernate Tools 4.3.1.Final
+// Generated Jan 23, 2016 5:01:29 PM by Hibernate Tools 4.3.1.Final
 
 import java.util.Date;
 import java.util.HashSet;
@@ -23,44 +23,47 @@ import javax.persistence.TemporalType;
 public class Post implements java.io.Serializable {
 
 	private int id;
-	private Post post;
+	private Post parent;
 	private Topic topic;
 	private User user;
 	private String content;
-	private int hierarchyLevel;
+	private int hierarchyLevel = 1;
+	private boolean savedBefore = false;
 	private Date createdAt;
 	private Date updatedAt;
-	private Set<Post> posts = new HashSet<Post>(0);
-	private Set<PostAncestor> postAncestorsForAncestorId = new HashSet<PostAncestor>(0);
-	private Set<PostAncestor> postAncestorsForPostId = new HashSet<PostAncestor>(0);
+	private Set<Post> children = new HashSet<Post>(0);
+	private Set<PostAncestor> ancestors = new HashSet<PostAncestor>(0);
+	private Set<PostAncestor> descendants = new HashSet<PostAncestor>(0);
 
 	public Post() {
 	}
 
-	public Post(int id, Topic topic, User user, String content, int hierarchyLevel, Date createdAt, Date updatedAt) {
+	public Post(int id, Topic topic, User user, String content, int hierarchyLevel, boolean savedBefore, Date createdAt, Date updatedAt) {
 		this.id = id;
 		this.topic = topic;
 		this.user = user;
 		this.content = content;
 		this.hierarchyLevel = hierarchyLevel;
+		this.savedBefore = savedBefore;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
 
-	public Post(int id, Post post, Topic topic, User user, String content, int hierarchyLevel, Date createdAt,
-			Date updatedAt, Set<Post> posts, Set<PostAncestor> postAncestorsForAncestorId,
-			Set<PostAncestor> postAncestorsForPostId) {
+	public Post(int id, Post parent, Topic topic, User user, String content, int hierarchyLevel, boolean savedBefore, Date createdAt,
+			Date updatedAt, Set<Post> children, Set<PostAncestor> ancestors,
+			Set<PostAncestor> descendants) {
 		this.id = id;
-		this.post = post;
+		this.parent = parent;
 		this.topic = topic;
 		this.user = user;
 		this.content = content;
 		this.hierarchyLevel = hierarchyLevel;
+		this.savedBefore = savedBefore;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
-		this.posts = posts;
-		this.postAncestorsForAncestorId = postAncestorsForAncestorId;
-		this.postAncestorsForPostId = postAncestorsForPostId;
+		this.children = children;
+		this.ancestors = ancestors;
+		this.descendants = descendants;
 	}
 
 	@Id
@@ -76,12 +79,12 @@ public class Post implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")
-	public Post getPost() {
-		return this.post;
+	public Post getParent() {
+		return this.parent;
 	}
 
-	public void setPost(Post post) {
-		this.post = post;
+	public void setParent(Post post) {
+		this.parent = post;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -121,6 +124,15 @@ public class Post implements java.io.Serializable {
 	public void setHierarchyLevel(int hierarchyLevel) {
 		this.hierarchyLevel = hierarchyLevel;
 	}
+	
+	@Column(name = "saved_before", nullable = false)
+	public boolean getSavedBefore() {
+		return this.savedBefore;
+	}
+	
+	public void setSavedBefore(boolean savedBefore) {
+		this.savedBefore = savedBefore;
+	}
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false, length = 29)
@@ -142,31 +154,31 @@ public class Post implements java.io.Serializable {
 		this.updatedAt = updatedAt;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
-	public Set<Post> getPosts() {
-		return this.posts;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+	public Set<Post> getChildren() {
+		return this.children;
 	}
 
-	public void setPosts(Set<Post> posts) {
-		this.posts = posts;
+	public void setChildren(Set<Post> posts) {
+		this.children = posts;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "postByAncestorId")
-	public Set<PostAncestor> getPostAncestorsForAncestorId() {
-		return this.postAncestorsForAncestorId;
+	public Set<PostAncestor> getAncestors() {
+		return this.ancestors;
 	}
 
-	public void setPostAncestorsForAncestorId(Set<PostAncestor> postAncestorsForAncestorId) {
-		this.postAncestorsForAncestorId = postAncestorsForAncestorId;
+	public void setAncestors(Set<PostAncestor> postAncestorsForAncestorId) {
+		this.ancestors = postAncestorsForAncestorId;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "postByPostId")
-	public Set<PostAncestor> getPostAncestorsForPostId() {
-		return this.postAncestorsForPostId;
+	public Set<PostAncestor> getDescendants() {
+		return this.descendants;
 	}
 
-	public void setPostAncestorsForPostId(Set<PostAncestor> postAncestorsForPostId) {
-		this.postAncestorsForPostId = postAncestorsForPostId;
+	public void setDescendants(Set<PostAncestor> postAncestorsForPostId) {
+		this.descendants = postAncestorsForPostId;
 	}
 
 }

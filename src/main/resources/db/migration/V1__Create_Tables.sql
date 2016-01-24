@@ -18,8 +18,9 @@ CREATE TABLE "user" (
 CREATE TABLE "category" (
 	"id" SERIAL,
 	"name" varchar NOT NULL,
-	"description" varchar NOT NULL,
-	"hierarchy_level" int NOT NULL,
+	"description" varchar,
+	"hierarchy_level" int NOT NULL DEFAULT 1,
+	"saved_before" boolean NOT NULL DEFAULT FALSE,
 	"created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"updated_at" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"parent_id" int,
@@ -48,7 +49,8 @@ CREATE TABLE "topic" (
 CREATE TABLE "post" (
 	"id" SERIAL,
 	"content" varchar NOT NULL,
-	"hierarchy_level" int NOT NULL,
+	"hierarchy_level" int NOT NULL DEFAULT 1,
+	"saved_before" boolean NOT NULL DEFAULT FALSE,
 	"created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"updated_at" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"author_id" int NOT NULL,

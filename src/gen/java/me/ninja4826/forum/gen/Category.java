@@ -1,5 +1,5 @@
 package me.ninja4826.forum.gen;
-// Generated Jan 22, 2016 3:59:57 PM by Hibernate Tools 4.3.1.Final
+// Generated Jan 23, 2016 5:01:29 PM by Hibernate Tools 4.3.1.Final
 
 import java.util.Date;
 import java.util.HashSet;
@@ -23,44 +23,47 @@ import javax.persistence.TemporalType;
 public class Category implements java.io.Serializable {
 
 	private int id;
-	private Category category;
+	private Category parent;
 	private String name;
 	private String description;
-	private int hierarchyLevel;
+	private int hierarchyLevel = 1;
+	private boolean savedBefore = false;
 	private Date createdAt;
 	private Date updatedAt;
-	private Set<Category> categories = new HashSet<Category>(0);
+	private Set<Category> children = new HashSet<Category>(0);
 	private Set<Topic> topics = new HashSet<Topic>(0);
-	private Set<CategoryAncestor> categoryAncestorsForCategoryId = new HashSet<CategoryAncestor>(0);
-	private Set<CategoryAncestor> categoryAncestorsForAncestorId = new HashSet<CategoryAncestor>(0);
+	private Set<CategoryAncestor> ancestors = new HashSet<CategoryAncestor>(0);
+	private Set<CategoryAncestor> descendants = new HashSet<CategoryAncestor>(0);
 
 	public Category() {
 	}
 
-	public Category(int id, String name, String description, int hierarchyLevel, Date createdAt, Date updatedAt) {
+	public Category(int id, String name, String description, int hierarchyLevel, boolean savedBefore, Date createdAt, Date updatedAt) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.hierarchyLevel = hierarchyLevel;
+		this.savedBefore = savedBefore;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
 
-	public Category(int id, Category category, String name, String description, int hierarchyLevel, Date createdAt,
-			Date updatedAt, Set<Category> categories, Set<Topic> topics,
-			Set<CategoryAncestor> categoryAncestorsForCategoryId,
-			Set<CategoryAncestor> categoryAncestorsForAncestorId) {
+	public Category(int id, Category parent, String name, String description, int hierarchyLevel, boolean savedBefore, Date createdAt,
+			Date updatedAt, Set<Category> children, Set<Topic> topics,
+			Set<CategoryAncestor> ancestors,
+			Set<CategoryAncestor> descendants) {
 		this.id = id;
-		this.category = category;
+		this.parent = parent;
 		this.name = name;
 		this.description = description;
 		this.hierarchyLevel = hierarchyLevel;
+		this.savedBefore = savedBefore;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
-		this.categories = categories;
+		this.children = children;
 		this.topics = topics;
-		this.categoryAncestorsForCategoryId = categoryAncestorsForCategoryId;
-		this.categoryAncestorsForAncestorId = categoryAncestorsForAncestorId;
+		this.ancestors = ancestors;
+		this.descendants = descendants;
 	}
 
 	@Id
@@ -76,12 +79,12 @@ public class Category implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")
-	public Category getCategory() {
-		return this.category;
+	public Category getParent() {
+		return this.parent;
 	}
 
-	public void setCategory(Category category) {
-		this.category = category;
+	public void setParent(Category category) {
+		this.parent = category;
 	}
 
 	@Column(name = "name", nullable = false)
@@ -110,6 +113,15 @@ public class Category implements java.io.Serializable {
 	public void setHierarchyLevel(int hierarchyLevel) {
 		this.hierarchyLevel = hierarchyLevel;
 	}
+	
+	@Column(name = "saved_before", nullable = false)
+	public boolean getSavedBefore() {
+		return this.savedBefore;
+	}
+	
+	public void setSavedBefore(boolean savedBefore) {
+		this.savedBefore = savedBefore;
+	}
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false, length = 29)
@@ -131,13 +143,13 @@ public class Category implements java.io.Serializable {
 		this.updatedAt = updatedAt;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
-	public Set<Category> getCategories() {
-		return this.categories;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+	public Set<Category> getChildren() {
+		return this.children;
 	}
 
-	public void setCategories(Set<Category> categories) {
-		this.categories = categories;
+	public void setChildren(Set<Category> categories) {
+		this.children = categories;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
@@ -150,21 +162,21 @@ public class Category implements java.io.Serializable {
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryByCategoryId")
-	public Set<CategoryAncestor> getCategoryAncestorsForCategoryId() {
-		return this.categoryAncestorsForCategoryId;
+	public Set<CategoryAncestor> getAncestors() {
+		return this.ancestors;
 	}
 
-	public void setCategoryAncestorsForCategoryId(Set<CategoryAncestor> categoryAncestorsForCategoryId) {
-		this.categoryAncestorsForCategoryId = categoryAncestorsForCategoryId;
+	public void setAncestors(Set<CategoryAncestor> categoryAncestorsForCategoryId) {
+		this.ancestors = categoryAncestorsForCategoryId;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryByAncestorId")
-	public Set<CategoryAncestor> getCategoryAncestorsForAncestorId() {
-		return this.categoryAncestorsForAncestorId;
+	public Set<CategoryAncestor> getDescendants() {
+		return this.descendants;
 	}
 
-	public void setCategoryAncestorsForAncestorId(Set<CategoryAncestor> categoryAncestorsForAncestorId) {
-		this.categoryAncestorsForAncestorId = categoryAncestorsForAncestorId;
+	public void setDescendants(Set<CategoryAncestor> categoryAncestorsForAncestorId) {
+		this.descendants = categoryAncestorsForAncestorId;
 	}
 
 }

@@ -8,13 +8,13 @@
             <column name="id" />
             <generator class="assigned" />
         </id>
-        <many-to-one name="post" class="me.ninja4826.forum.gen.Post" fetch="select">
+        <many-to-one name="parent" class="me.ninja4826.forum.gen.Post" fetch="select">
             <column name="parent_id" />
         </many-to-one>
         <many-to-one name="topic" class="me.ninja4826.forum.gen.Topic" fetch="select">
             <column name="topic_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="user" class="me.ninja4826.forum.gen.User" fetch="select">
+        <many-to-one name="author" class="me.ninja4826.forum.gen.User" fetch="select">
             <column name="author_id" not-null="true" />
         </many-to-one>
         <property name="content" type="string">
@@ -23,25 +23,28 @@
         <property name="hierarchyLevel" type="int">
             <column name="hierarchy_level" not-null="true" />
         </property>
+        <property name="savedBefore" type="boolean">
+        	<column name="saved_before" not-null="true" />
+        </property>
         <property name="createdAt" type="timestamp">
             <column name="created_at" length="29" not-null="true" />
         </property>
         <property name="updatedAt" type="timestamp">
             <column name="updated_at" length="29" not-null="true" />
         </property>
-        <set name="posts" table="post" inverse="true" lazy="true" fetch="select">
+        <set name="children" table="post" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="parent_id" />
             </key>
             <one-to-many class="me.ninja4826.forum.gen.Post" />
         </set>
-        <set name="postAncestorsForAncestorId" table="post_ancestor" inverse="true" lazy="true" fetch="select">
+        <set name="descendants" table="post_ancestor" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="ancestor_id" not-null="true" />
             </key>
             <one-to-many class="me.ninja4826.forum.gen.PostAncestor" />
         </set>
-        <set name="postAncestorsForPostId" table="post_ancestor" inverse="true" lazy="true" fetch="select">
+        <set name="ancestors" table="post_ancestor" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="post_id" not-null="true" />
             </key>
