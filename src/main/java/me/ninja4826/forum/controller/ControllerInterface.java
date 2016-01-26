@@ -34,16 +34,16 @@ public class ControllerInterface {
 	
 	public static void setupEndpoints() {
 		for (Entry<String, Route> r : gets.entrySet()) {
-			Spark.get(r.getKey(), "application/json", r.getValue(), new JsonTransformer());
+			Spark.get(r.getKey(), "application/json", r.getValue(), JsonTransformer.getInstance());
 		}
 		for (Map.Entry<String, Route> r : posts.entrySet()) {
-			Spark.post(r.getKey(), "application/json", r.getValue(), new JsonTransformer());
+			Spark.post(r.getKey(), "application/json", r.getValue(), JsonTransformer.getInstance());
 		}
 		for (Map.Entry<String, Route> r : puts.entrySet()) {
-			Spark.put(r.getKey(), "application/json", r.getValue(), new JsonTransformer());
+			Spark.put(r.getKey(), "application/json", r.getValue(), JsonTransformer.getInstance());
 		}
 		for (Map.Entry<String, Route> r : deletes.entrySet()) {
-			Spark.delete(r.getKey(), "application/json", r.getValue(), new JsonTransformer());
+			Spark.delete(r.getKey(), "application/json", r.getValue(), JsonTransformer.getInstance());
 		}
 	}
 	

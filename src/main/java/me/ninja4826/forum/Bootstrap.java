@@ -13,6 +13,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import me.ninja4826.forum.controller.SuperController;
 import me.ninja4826.forum.controller.v1.UserController;
+import me.ninja4826.forum.util.HibernateUtil;
 import me.ninja4826.forum.util.Props;
 import me.ninja4826.forum.util.Util;
 
@@ -23,6 +24,7 @@ public class Bootstrap {
 	private static int PORT;
 	
 	public static void run() throws Exception {
+		HibernateUtil.boot();
 		CLIENT_SECRET = Props.getProp("jwtSecret");
 		IP_ADDRESS = Props.getProp("webAddress");
 		PORT = Integer.parseInt(Props.getProp("webPort"));
@@ -52,6 +54,7 @@ public class Bootstrap {
 		});
 		
 		UserController userController = new UserController();
+//		UserControllerNew userController = new UserControllerNew();
 		
 		SuperController.addController(userController);
 		SuperController.setupEndpoints();

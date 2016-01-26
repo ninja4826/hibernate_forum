@@ -5,15 +5,14 @@ CREATE TABLE "user" (
 	"password" varchar,
 	"salt" varchar NOT NULL,
 	"password_hash" varchar NOT NULL,
-	"role" varchar NOT NULL DEFAULT 'user',
+	-- "role" varchar NOT NULL DEFAULT 'user',
+	"role" int NOT NULL DEFAULT 1,
 	"created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"updated_at" TIMESTAMP NOT NULL DEFAULT NOW(),
 	CONSTRAINT user_pk PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
-
-
 
 CREATE TABLE "category" (
 	"id" SERIAL,

@@ -1,5 +1,6 @@
 package me.ninja4826.forum;
 
+import me.ninja4826.forum.model.table.registry.TableRegistry;
 
 public class App {
 	
